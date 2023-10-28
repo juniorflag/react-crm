@@ -1,6 +1,8 @@
-import { useNavigate, Form, useActionData } from "react-router-dom";
+import { useNavigate, Form, useActionData, redirect } from "react-router-dom";
 import Formulario from "../components/Formulario";
 import Error from "../components/Error";
+import { agregarCliente } from "../data/Clientes";
+
 
 export async function action({ request }) {
   const formData = await request.formData();
@@ -10,7 +12,7 @@ export async function action({ request }) {
 
   // console.log([...formData])
 
-  const dato = Object.fromEntries(formData);
+  const datos = Object.fromEntries(formData);
 
   const error = [];
   let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
@@ -22,7 +24,7 @@ export async function action({ request }) {
     error.push('El email no es valido')
   }
 
-  if (Object.values(dato).includes("")) {
+  if (Object.values(datos).includes("")) {
     error.push("todos los datos son obligatorios");
   }
 
@@ -30,7 +32,10 @@ export async function action({ request }) {
     return error;
   }
 
-  return null;
+ await agregarCliente(datos)
+
+
+  return redirect('/');
 }
 
 const NuevoCliente = () => {
